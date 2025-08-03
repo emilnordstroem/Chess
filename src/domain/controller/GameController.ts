@@ -72,18 +72,19 @@ export class GameController {
     }
 
     handleSquareClick(currentBoard: Board,
-                      selected: {file: number, rank: number} | null,
-                      clickedSquare: Square): {file: number, rank: number} | null {
-        if (selected) {
-            const isSame = selected.file === clickedSquare.file && selected.rank === clickedSquare.rank;
+                      selectedSquare: Square | null,
+                      clickedSquare: Square): Square | null {
+        if (selectedSquare) {
+            if (this.isSquareTheSame(selectedSquare, clickedSquare)){
+                return null; // unselect
+            }
 
-            if (isSame) return null; // unselect
+            const fromSquare: Square = currentBoard.boardSquares[selectedSquare.rank - 1][selectedSquare.file - 1];
+            const pieceToMove: Piece | null = fromSquare.occupant;
+            const toSquare: Square = clickedSquare;
 
-            const fromSquare = currentBoard.boardSquares[selected.rank][selected.file]; // safer access
-            const toSquare = clickedSquare;
-
-            if (this.canPieceOccupySquare(fromSquare.occupant, toSquare)) {
-                this.relocatePieceToSquare(fromSquare, fromSquare.occupant, toSquare);
+            if (this.canPieceOccupySquare(pieceToMove, toSquare)) {
+                this.relocatePieceToSquare(fromSquare, pieceToMove, toSquare);
                 return null;
             }
 
@@ -91,7 +92,7 @@ export class GameController {
         }
 
         if (this.isSquareOccupied(clickedSquare)) {
-            return { file: clickedSquare.file, rank: clickedSquare.rank };
+            return clickedSquare;
         }
 
         return null;

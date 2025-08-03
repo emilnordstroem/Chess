@@ -7,10 +7,10 @@ const gameMechanics: GameController = new GameController();
 
 export const ChessBoard = () => {
     const [currentChessBoard, setCurrentChessBoard] = useState<Board>(gameMechanics.boardSetup());
-    const [selectedSquare, setSelectedSquare] = useState<{file: number, rank: number} | null>(null);
+    const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
 
     function handleSquareClick(clickedSquare: Square): void {
-        const newSelectedSquare = gameMechanics.handleSquareClick(currentChessBoard, selectedSquare, clickedSquare);
+        const newSelectedSquare: Square | null = gameMechanics.handleSquareClick(currentChessBoard, selectedSquare, clickedSquare);
         setSelectedSquare(newSelectedSquare);
 
         const updatedBoard: Board = gameMechanics.getUpdatedBoard(currentChessBoard);
