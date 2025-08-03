@@ -4,7 +4,7 @@ import {PieceColor} from "../models/PieceColor.ts";
 import {Piece} from "../models/Piece.ts";
 import {PieceType} from "../models/PieceType.ts";
 
-export class GameController {
+export class BoardController {
 
     constructor() {}
 

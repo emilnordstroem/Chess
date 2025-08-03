@@ -1,9 +1,9 @@
-import {GameController} from "../../domain/controller/GameController.ts";
+import {BoardController} from "../../domain/controller/BoardController.ts";
 import {Board} from "../../domain/models/Board.ts";
 import {useState} from "react";
 import {Square} from "../../domain/models/Square.ts";
 
-const gameMechanics: GameController = new GameController();
+const gameMechanics: BoardController = new BoardController();
 
 export const ChessBoard = () => {
     const [currentChessBoard, setCurrentChessBoard] = useState<Board>(gameMechanics.boardSetup());
