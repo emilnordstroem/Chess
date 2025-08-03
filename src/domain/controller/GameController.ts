@@ -1,5 +1,5 @@
 import {Board} from "../models/Board.ts";
-import {type Square} from "../models/Square.ts";
+import {Square} from "../models/Square.ts";
 import {PieceColor} from "../models/PieceColor.ts";
 import {Piece} from "../models/Piece.ts";
 import {PieceType} from "../models/PieceType.ts";
@@ -8,8 +8,13 @@ export class GameController {
 
     constructor() {}
 
-    chessBoardSetup(): Board {
+    boardSetup(): Board {
         const board = new Board();
+        board.boardSquares = this.squareConfigurationSetup(board);
+        return board;
+    }
+
+    squareConfigurationSetup(board: Board): Square[][] {
         const squares: Square[][] = board.boardSquares;
 
         const boardRankIndexesToPlacePieces: number[] = [0, 1, 6, 7];
@@ -46,9 +51,80 @@ export class GameController {
             }
         }
 
-        board.boardSquares = squares;
+        return squares;
+    }
 
-        return board;
+    getUpdatedBoard(previousBoard: Board): Board {
+        const newBoard = new Board();
+        newBoard.boardSquares = this.updatedSquareConfiguration(previousBoard);
+        return newBoard;
+    }
+
+    updatedSquareConfiguration(previousBoard: Board): Square[][] {
+        const newSquares: Square[][] = previousBoard.boardSquares.map((row) =>
+            row.map((square) => {
+                const newSquare = new Square(square.file, square.rank);
+                newSquare.occupant = square.isOccupied() ? square.occupant : null;
+                return newSquare;
+            })
+        );
+        return newSquares;
+    }
+
+    handleSquareClick(currentBoard: Board,
+                      selected: {file: number, rank: number} | null,
+                      clickedSquare: Square): {file: number, rank: number} | null {
+        if (selected) {
+            const isSame = selected.file === clickedSquare.file && selected.rank === clickedSquare.rank;
+
+            if (isSame) return null; // unselect
+
+            const fromSquare = currentBoard.boardSquares[selected.rank][selected.file]; // safer access
+            const toSquare = clickedSquare;
+
+            if (this.canPieceOccupySquare(fromSquare.occupant, toSquare)) {
+                this.relocatePieceToSquare(fromSquare, fromSquare.occupant, toSquare);
+                return null;
+            }
+
+            return null;
+        }
+
+        if (this.isSquareOccupied(clickedSquare)) {
+            return { file: clickedSquare.file, rank: clickedSquare.rank };
+        }
+
+        return null;
+    }
+
+    isSquareOccupied(squareToCheck: Square | null): boolean {
+        return squareToCheck == null ? false : squareToCheck.isOccupied();
+    }
+
+    isSquareTheSame(selectedSquare: Square | null, clickedSquare: Square | null): boolean {
+        if (selectedSquare === null || clickedSquare === null) {
+            return false;
+        }
+        return selectedSquare.file === clickedSquare.file
+            && selectedSquare.rank === clickedSquare.rank;
+    }
+
+    canPieceOccupySquare(piece: Piece | null,
+                         squareToOccupy: Square | null): boolean {
+        if (piece === null || squareToOccupy === null) {
+            return false;
+        }
+        return squareToOccupy.occupant?.color !== piece.color;
+    }
+
+    relocatePieceToSquare(moveFromSquare: Square | null,
+                          pieceToMove: Piece | null,
+                          moveToSquare: Square | null): void {
+        if (moveFromSquare == null || moveToSquare == null) {
+            return;
+        }
+        moveFromSquare.occupant = null;
+        moveToSquare.occupant = pieceToMove;
     }
 
 }

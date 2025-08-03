@@ -1,4 +1,4 @@
-import type {Piece} from "./Piece.ts";
+import  {type Piece} from "./Piece.ts";
 
 export class Square {
     private _file : number;
@@ -21,6 +21,10 @@ export class Square {
 
     get rank(): number {
         return this._rank;
+    }
+
+    get occupant(): Piece | null {
+        return this._occupant;
     }
 
     set occupant(piece: Piece | null) {
