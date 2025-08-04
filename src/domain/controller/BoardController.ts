@@ -72,34 +72,26 @@ export class BoardController {
     }
 
     handleSquareClick(currentBoard: Board,
+                      currentTurn: PieceColor,
                       selectedSquare: Square | null,
                       clickedSquare: Square): Square | null {
-        if (selectedSquare) {
-            if (this.isSquareTheSame(selectedSquare, clickedSquare)){
-                return null; // unselect
-            }
-
-            const fromSquare: Square = currentBoard.boardSquares[selectedSquare.rank - 1][selectedSquare.file - 1];
-            const pieceToMove: Piece | null = fromSquare.occupant;
-            const toSquare: Square = clickedSquare;
-
-            if (this.canPieceOccupySquare(pieceToMove, toSquare)) {
-                this.relocatePieceToSquare(fromSquare, pieceToMove, toSquare);
-                return null;
-            }
-
-            return null;
+        if (selectedSquare == null) {
+            return this.isSquareOccupied(clickedSquare) ? clickedSquare : null;
+        } else if (this.isSquareTheSame(selectedSquare, clickedSquare)) {
+            return null; // unselected
+        } else if (this.isSquareValidToSelect(currentTurn, selectedSquare)) {
+            return null; // invalid selected square
         }
 
-        if (this.isSquareOccupied(clickedSquare)) {
-            return clickedSquare;
+        const fromSquare: Square = currentBoard.boardSquares[selectedSquare.rank - 1][selectedSquare.file - 1];
+        const pieceToMove: Piece | null = fromSquare.occupant;
+        const toSquare: Square = clickedSquare;
+
+        if (this.canPieceOccupySquare(pieceToMove, toSquare)) {
+            this.relocatePieceToSquare(fromSquare, pieceToMove, toSquare);
         }
 
         return null;
-    }
-
-    isSquareOccupied(squareToCheck: Square | null): boolean {
-        return squareToCheck == null ? false : squareToCheck.isOccupied();
     }
 
     isSquareTheSame(selectedSquare: Square | null, clickedSquare: Square | null): boolean {
@@ -108,6 +100,13 @@ export class BoardController {
         }
         return selectedSquare.file === clickedSquare.file
             && selectedSquare.rank === clickedSquare.rank;
+    }
+
+    isSquareValidToSelect(currentTurn: PieceColor, selectedSqaure: Square | null): boolean {
+        if (selectedSqaure) {
+            return currentTurn === selectedSqaure.occupant?.color;
+        }
+        return false;
     }
 
     canPieceOccupySquare(piece: Piece | null,
@@ -126,6 +125,14 @@ export class BoardController {
         }
         moveFromSquare.occupant = null;
         moveToSquare.occupant = pieceToMove;
+    }
+
+    isSquareOccupied(squareToCheck: Square | null): boolean {
+        return squareToCheck == null ? false : squareToCheck.isOccupied();
+    }
+
+    shiftTurn(currentTurn: PieceColor): PieceColor {
+        return currentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White
     }
 
 }

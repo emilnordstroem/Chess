@@ -2,19 +2,29 @@ import {BoardController} from "../../domain/controller/BoardController.ts";
 import {Board} from "../../domain/models/Board.ts";
 import {useState} from "react";
 import {Square} from "../../domain/models/Square.ts";
+import {PieceColor} from "../../domain/models/PieceColor.ts";
 
-const gameMechanics: BoardController = new BoardController();
+const boardController: BoardController = new BoardController();
 
 export const ChessBoard = () => {
-    const [currentChessBoard, setCurrentChessBoard] = useState<Board>(gameMechanics.boardSetup());
+    const [currentChessBoard, setCurrentChessBoard] = useState<Board>(boardController.boardSetup());
+    const [currentTurn, setCurrentTurn] = useState<PieceColor>(PieceColor.White);
     const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
 
+    function isSquareSelected(clickedSquare: Square): boolean | null {
+        return selectedSquare
+            && selectedSquare.file === clickedSquare.file
+            && selectedSquare.rank === clickedSquare.rank;
+    }
+
     function handleSquareClick(clickedSquare: Square): void {
-        const newSelectedSquare: Square | null = gameMechanics.handleSquareClick(currentChessBoard, selectedSquare, clickedSquare);
+        const newSelectedSquare: Square | null = boardController.handleSquareClick(currentChessBoard, currentTurn, selectedSquare, clickedSquare);
         setSelectedSquare(newSelectedSquare);
 
-        const updatedBoard: Board = gameMechanics.getUpdatedBoard(currentChessBoard);
-        setCurrentChessBoard(updatedBoard);
+        // setCurrentTurn(boardController.shiftTurn(currentTurn));
+
+        const updatedChessBoard: Board = boardController.getUpdatedBoard(currentChessBoard);
+        setCurrentChessBoard(updatedChessBoard);
     }
 
     return (
@@ -22,12 +32,8 @@ export const ChessBoard = () => {
             {currentChessBoard.boardSquares.map((rowOfSquares, rankIndex) => (
                 <div key={rankIndex} style={{ display: 'flex' }}>
                     {rowOfSquares.map((clickedSquare: Square, fileIndex) => {
-                        const isDark = (fileIndex + rankIndex) % 2 === 1;
+                        const isDark = (fileIndex + rankIndex) % 2 === 1; // even numbers are dark
                         const backgroundColor = isDark ? '#769656' : '#eeeed2';
-
-                        const isSelected = selectedSquare &&
-                            selectedSquare.file === clickedSquare.file &&
-                            selectedSquare.rank === clickedSquare.rank;
 
                         return (
                             <div
@@ -40,10 +46,10 @@ export const ChessBoard = () => {
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    border: isSelected ? '2px solid red' : '1px solid black',
+                                    border: isSquareSelected(clickedSquare) ? '2px solid red' : '1px solid black',
                                 }}
                             >
-                                {gameMechanics.isSquareOccupied(clickedSquare)
+                                {boardController.isSquareOccupied(clickedSquare)
                                     ? clickedSquare.occupant?.type
                                     : ""}
                             </div>
