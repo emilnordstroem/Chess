@@ -3,27 +3,48 @@ import {Board} from "../../domain/models/Board.ts";
 import {useState} from "react";
 import {Square} from "../../domain/models/Square.ts";
 import {PieceColor} from "../../domain/models/PieceColor.ts";
+import {InteractionMechanicsController} from "../../domain/controller/InteractionMechanicsController.ts";
+import {LogicalMechanicsController} from "../../domain/controller/LogicalMechanicsController.ts";
 
-const boardController: BoardController = new BoardController();
+const interactionMechanics: InteractionMechanicsController = new InteractionMechanicsController();
+const logicalMechanics: LogicalMechanicsController = new LogicalMechanicsController();
+const boardStructure: BoardController = new BoardController();
 
 export const ChessBoard = () => {
-    const [currentChessBoard, setCurrentChessBoard] = useState<Board>(boardController.boardSetup());
+    const [currentChessBoard, setCurrentChessBoard] = useState<Board>(boardStructure.boardSetup());
     const [currentTurn, setCurrentTurn] = useState<PieceColor>(PieceColor.White);
     const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
 
-    function isSquareSelected(clickedSquare: Square): boolean | null {
-        return selectedSquare
-            && selectedSquare.file === clickedSquare.file
-            && selectedSquare.rank === clickedSquare.rank;
+    function squareBorderColor(clickedSquare: Square): string {
+        if(isSquareSelected(clickedSquare)){
+            if (!logicalMechanics.isSquareOccupied(clickedSquare)) {
+                return '1px solid black';
+            } else if (!logicalMechanics.isSquareValidToSelect(currentTurn, clickedSquare)) {
+                return '2px solid red';
+            } else {
+                return '2px solid green';
+            }
+        }
+        return "";
+    }
+
+    function isSquareSelected(clickedSquare: Square): boolean {
+        return (
+            selectedSquare !== null &&
+            selectedSquare.file === clickedSquare.file &&
+            selectedSquare.rank === clickedSquare.rank
+        );
     }
 
     function handleSquareClick(clickedSquare: Square): void {
-        const newSelectedSquare: Square | null = boardController.handleSquareClick(currentChessBoard, currentTurn, selectedSquare, clickedSquare);
+        const {newSelectedSquare, moveExecuted} = interactionMechanics.handleSquareClick(currentChessBoard, currentTurn, selectedSquare, clickedSquare);
         setSelectedSquare(newSelectedSquare);
 
-        // setCurrentTurn(boardController.shiftTurn(currentTurn));
+        if (moveExecuted) {
+            setCurrentTurn(interactionMechanics.shiftTurn(currentTurn));
+        }
 
-        const updatedChessBoard: Board = boardController.getUpdatedBoard(currentChessBoard);
+        const updatedChessBoard: Board = boardStructure.getUpdatedBoard(currentChessBoard);
         setCurrentChessBoard(updatedChessBoard);
     }
 
@@ -46,10 +67,10 @@ export const ChessBoard = () => {
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    border: isSquareSelected(clickedSquare) ? '2px solid red' : '1px solid black',
+                                    border: squareBorderColor(clickedSquare)
                                 }}
                             >
-                                {boardController.isSquareOccupied(clickedSquare)
+                                {logicalMechanics.isSquareOccupied(clickedSquare)
                                     ? clickedSquare.occupant?.type
                                     : ""}
                             </div>
