@@ -16,7 +16,7 @@ export const ChessBoard = () => {
     const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
 
     function squareBorderColor(clickedSquare: Square): string {
-        if(isSquareSelected(clickedSquare)){
+        if(logicalMechanics.isSquareSelected(selectedSquare, clickedSquare)){
             if (!logicalMechanics.isSquareOccupied(clickedSquare)) {
                 return '1px solid black';
             } else if (!logicalMechanics.isSquareValidToSelect(currentTurn, clickedSquare)) {
@@ -26,14 +26,6 @@ export const ChessBoard = () => {
             }
         }
         return "";
-    }
-
-    function isSquareSelected(clickedSquare: Square): boolean {
-        return (
-            selectedSquare !== null &&
-            selectedSquare.file === clickedSquare.file &&
-            selectedSquare.rank === clickedSquare.rank
-        );
     }
 
     function handleSquareClick(clickedSquare: Square): void {

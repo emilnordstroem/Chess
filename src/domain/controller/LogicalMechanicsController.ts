@@ -6,6 +6,14 @@ export class LogicalMechanicsController {
 
     constructor() {}
 
+    isSquareSelected(selectedSquare: Square | null, clickedSquare: Square): boolean {
+        return (
+            selectedSquare !== null &&
+            selectedSquare.file === clickedSquare.file &&
+            selectedSquare.rank === clickedSquare.rank
+        );
+    }
+
     isSquareTheSame(selectedSquare: Square | null, clickedSquare: Square | null): boolean {
         if (selectedSquare === null || clickedSquare === null) {
             return false;
