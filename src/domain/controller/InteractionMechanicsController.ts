@@ -3,7 +3,7 @@ import {PieceColor} from "../models/PieceColor.ts";
 import {Square} from "../models/Square.ts";
 import {Piece} from "../models/Piece.ts";
 import {LogicalMechanicsController} from "./LogicalMechanicsController.ts";
-import {PieceMovementController} from "./PieceMovementController.ts";
+import {PieceMovementController} from "./PieceMovementControllers/PieceMovementController.ts";
 
 export class InteractionMechanicsController {
     logicalMechanics: LogicalMechanicsController = new LogicalMechanicsController();

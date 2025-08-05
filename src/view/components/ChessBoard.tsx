@@ -5,15 +5,18 @@ import {Square} from "../../domain/models/Square.ts";
 import {PieceColor} from "../../domain/models/PieceColor.ts";
 import {InteractionMechanicsController} from "../../domain/controller/InteractionMechanicsController.ts";
 import {LogicalMechanicsController} from "../../domain/controller/LogicalMechanicsController.ts";
+import {PieceMovementController} from "../../domain/controller/PieceMovementControllers/PieceMovementController.ts";
 
 const interactionMechanics: InteractionMechanicsController = new InteractionMechanicsController();
 const logicalMechanics: LogicalMechanicsController = new LogicalMechanicsController();
 const boardStructure: BoardController = new BoardController();
+const pieceMovement: PieceMovementController = new PieceMovementController();
 
 export const ChessBoard = () => {
     const [currentChessBoard, setCurrentChessBoard] = useState<Board>(boardStructure.boardSetup());
     const [currentTurn, setCurrentTurn] = useState<PieceColor>(PieceColor.White);
     const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
+    const [validMoveSquares, setValidMoveSquares] = useState<Square[]>([]);
 
     function squareBorderColor(clickedSquare: Square): string {
         if(logicalMechanics.isSquareSelected(selectedSquare, clickedSquare)){
@@ -25,12 +28,35 @@ export const ChessBoard = () => {
                 return '2px solid green';
             }
         }
-        return "";
+
+        const isValidMoveSquare = validMoveSquares.some(
+            square =>
+                square.file === clickedSquare.file
+                && square.rank === clickedSquare.rank
+        );
+
+        if (isValidMoveSquare) {
+            return '2px solid blue';
+        }
+
+        return '1px solid black';
     }
 
     function handleSquareClick(clickedSquare: Square): void {
         const {newSelectedSquare, moveExecuted} = interactionMechanics.handleSquareClick(currentChessBoard, currentTurn, selectedSquare, clickedSquare);
         setSelectedSquare(newSelectedSquare);
+
+        if (newSelectedSquare && !moveExecuted) {
+            const possibleMoves = pieceMovement.possibleSquaresForPieceToCapture(
+                currentChessBoard,
+                newSelectedSquare,
+                newSelectedSquare.occupant!.type
+            ) || [];
+
+            setValidMoveSquares(possibleMoves);
+        } else {
+            setValidMoveSquares([]);
+        }
 
         if (moveExecuted) {
             setCurrentTurn(interactionMechanics.shiftTurn(currentTurn));
@@ -62,9 +88,17 @@ export const ChessBoard = () => {
                                     border: squareBorderColor(clickedSquare)
                                 }}
                             >
-                                {logicalMechanics.isSquareOccupied(clickedSquare)
-                                    ? clickedSquare.occupant?.type
-                                    : ""}
+                                {logicalMechanics.isSquareOccupied(clickedSquare) && clickedSquare.occupant && (
+                                    <span style={{
+                                        color: clickedSquare.occupant.color === PieceColor.White ? 'white' : 'black',
+                                        fontWeight: 'bold',
+                                        textShadow: clickedSquare.occupant.color === PieceColor.White
+                                            ? '1px 1px 1px black'
+                                            : '1px 1px 1px white'
+                                    }}>
+                                    {clickedSquare.occupant.type}
+                                    </span>
+                                )}
                             </div>
                         );
                     })}
