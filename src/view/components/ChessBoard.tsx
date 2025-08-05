@@ -43,7 +43,11 @@ export const ChessBoard = () => {
     }
 
     function handleSquareClick(clickedSquare: Square): void {
+        handleSquareSelection(clickedSquare);
+        handlePieceMovement(clickedSquare);
+    }
 
+    function handleSquareSelection(clickedSquare: Square): void{
         const newSelectedSquare: Square | null = interactionMechanics.handleSelectionOfSquare(
             currentTurn,
             selectedSquare,
@@ -63,7 +67,9 @@ export const ChessBoard = () => {
         } else {
             setValidSquaresToCapture([]);
         }
+    }
 
+    function handlePieceMovement(clickedSquare: Square): void {
         const isMoveAttempted = validSquaresToCapture.some(
             square =>
                 square.rank === clickedSquare.rank
@@ -85,7 +91,6 @@ export const ChessBoard = () => {
 
             return;
         }
-
     }
 
     return (

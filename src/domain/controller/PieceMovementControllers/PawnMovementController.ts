@@ -25,6 +25,37 @@ export class PawnMovementController {
         const nextRankMovement: number = baseRankIndex + directionMoveLimit;
         const doubleRankMovement: number = baseRankIndex + directionMoveLimit * 2;
 
+        possibleMoves.push(...this.possibleFrontMoves(
+            currentBoardSqures,
+            startRankIndex,
+            baseRankIndex,
+            baseFileIndex,
+            nextRankMovement,
+            doubleRankMovement
+        ));
+
+        const diagonalFiles: number[] = [baseFileIndex - 1, baseFileIndex + 1];
+        for (const diagonalFile of diagonalFiles) {
+            possibleMoves.push(...this.possibleDiagonalMoves(
+                currentBoardSqures,
+                piece,
+                nextRankMovement,
+                diagonalFile
+            ));
+        }
+
+        return possibleMoves;
+    }
+
+    private possibleFrontMoves(
+        currentBoardSqures: Square[][],
+        startRankIndex: number,
+        baseRankIndex: number,
+        baseFileIndex: number,
+        nextRankMovement: number,
+        doubleRankMovement: number): Square[]{
+        const possibleMoves: Square[] = [];
+
         if (this.inBounds(nextRankMovement, baseFileIndex)
             && !currentBoardSqures[nextRankMovement][baseFileIndex].isOccupied()) {
 
@@ -37,13 +68,20 @@ export class PawnMovementController {
             }
         }
 
-        const diagonalFiles: number[] = [baseFileIndex - 1, baseFileIndex + 1];
-        for (const diagonalFile of diagonalFiles) {
-            if (this.inBounds(nextRankMovement, diagonalFile)) {
-                const target: Square = currentBoardSqures[nextRankMovement][diagonalFile];
-                if (target.isOccupied() && this.logicalMechanics.canPieceOccupySquare(piece, target)) {
-                    possibleMoves.push(target);
-                }
+        return possibleMoves;
+    }
+
+    private possibleDiagonalMoves(
+        currentBoardSqures: Square[][],
+        piece: Piece,
+        nextRankMovement: number,
+        diagonalFile: number): Square[]{
+        const possibleMoves: Square[] = [];
+
+        if (this.inBounds(nextRankMovement, diagonalFile)) {
+            const target: Square = currentBoardSqures[nextRankMovement][diagonalFile];
+            if (target.isOccupied() && this.logicalMechanics.canPieceOccupySquare(piece, target)) {
+                possibleMoves.push(target);
             }
         }
 
