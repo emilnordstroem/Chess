@@ -16,12 +16,13 @@ export class RookMovementController {
         }
 
         const directions: number[] = [-1, 1];
-        const baseRankIndex: number = baseSquare.rank - 1;
+
+        const rankIndex: number = baseSquare.rank - 1;
         const fileIndex: number = baseSquare.file - 1;
 
         for (const direction in directions) {
-            possibleMoves.push(...this.possibleRankMoves(currentBoardSqures, piece, directions[direction], baseRankIndex, fileIndex));
-            possibleMoves.push(...this.possibleFileMoves(currentBoardSqures, piece, directions[direction], baseRankIndex, fileIndex));
+            possibleMoves.push(...this.possibleRankMoves(currentBoardSqures, piece, directions[direction], rankIndex, fileIndex));
+            possibleMoves.push(...this.possibleFileMoves(currentBoardSqures, piece, directions[direction], rankIndex, fileIndex));
         }
 
         return possibleMoves;

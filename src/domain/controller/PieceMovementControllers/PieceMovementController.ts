@@ -4,10 +4,12 @@ import {Board} from "../../models/Board.ts";
 import type {PieceType} from "../../models/PieceType.ts";
 import {PawnMovementController} from "./PawnMovementController.ts";
 import {RookMovementController} from "./RookMovementController.ts";
+import {KingMovementController} from "./KingMovementController.ts";
 
 export class PieceMovementController {
-    PawnMovementController: PawnMovementController = new PawnMovementController();
-    RookMovementController: RookMovementController = new RookMovementController();
+    pawnMovementController: PawnMovementController = new PawnMovementController();
+    rookMovementController: RookMovementController = new RookMovementController();
+    kingMovementController: KingMovementController = new KingMovementController();
 
     constructor() {}
 
@@ -24,9 +26,11 @@ export class PieceMovementController {
     possibleSquaresForPieceToCapture(currentBoard: Board, baseSquare: Square, pieceType: PieceType): Square[] | undefined {
         switch (pieceType) {
             case "Pawn":
-                return this.PawnMovementController.possibleSquaresForPawn(currentBoard.boardSquares, baseSquare);
+                return this.pawnMovementController.possibleSquaresForPawn(currentBoard.boardSquares, baseSquare);
             case "Rook":
-                return this.RookMovementController.possibleSquaresForRook(currentBoard.boardSquares, baseSquare);
+                return this.rookMovementController.possibleSquaresForRook(currentBoard.boardSquares, baseSquare);
+            case "King":
+                return this.kingMovementController.possibleSquaresForKing(currentBoard.boardSquares, baseSquare);
         }
     }
 
