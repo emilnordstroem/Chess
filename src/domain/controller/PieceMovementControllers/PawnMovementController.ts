@@ -27,6 +27,7 @@ export class PawnMovementController {
 
         if (this.inBounds(nextRankMovement, fileIndex)
             && !currentBoardSqures[nextRankMovement][fileIndex].isOccupied()) {
+
             possibleMoves.push(currentBoardSqures[nextRankMovement][fileIndex]);
 
             if (rankIndex === startRankIndex &&

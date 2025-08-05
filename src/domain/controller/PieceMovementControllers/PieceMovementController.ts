@@ -1,11 +1,13 @@
 import {Square} from "../../models/Square.ts";
 import {Piece} from "../../models/Piece.ts";
-import type {Board} from "../../models/Board.ts";
+import {Board} from "../../models/Board.ts";
 import type {PieceType} from "../../models/PieceType.ts";
 import {PawnMovementController} from "./PawnMovementController.ts";
+import {RookMovementController} from "./RookMovementController.ts";
 
 export class PieceMovementController {
     PawnMovementController: PawnMovementController = new PawnMovementController();
+    RookMovementController: RookMovementController = new RookMovementController();
 
     constructor() {}
 
@@ -23,6 +25,8 @@ export class PieceMovementController {
         switch (pieceType) {
             case "Pawn":
                 return this.PawnMovementController.possibleSquaresForPawn(currentBoard.boardSquares, baseSquare);
+            case "Rook":
+                return this.RookMovementController.possibleSquaresForRook(currentBoard.boardSquares, baseSquare);
         }
     }
 
