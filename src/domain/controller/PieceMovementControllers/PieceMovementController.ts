@@ -4,6 +4,7 @@ import {Board} from "../../models/Board.ts";
 import type {PieceType} from "../../models/PieceType.ts";
 import {PawnMovementController} from "./PawnMovementController.ts";
 import {RookMovementController} from "./RookMovementController.ts";
+import {KnightMovementController} from "./KnightMovementController.ts";
 import {BishopMovementController} from "./BishopMovementController.ts";
 import {QueenMovementController} from "./QueenMovementController.ts";
 import {KingMovementController} from "./KingMovementController.ts";
@@ -11,6 +12,7 @@ import {KingMovementController} from "./KingMovementController.ts";
 export class PieceMovementController {
     pawnMovementController: PawnMovementController = new PawnMovementController();
     rookMovementController: RookMovementController = new RookMovementController();
+    knightMovementController: KnightMovementController = new KnightMovementController();
     bishopMovementController: BishopMovementController = new BishopMovementController();
     queenMovementController: QueenMovementController = new QueenMovementController();
     kingMovementController: KingMovementController = new KingMovementController();
@@ -33,6 +35,8 @@ export class PieceMovementController {
                 return this.pawnMovementController.possibleSquaresForPawn(currentBoard.boardSquares, baseSquare);
             case "Rook":
                 return this.rookMovementController.possibleSquaresForRook(currentBoard.boardSquares, baseSquare);
+            case "Knight":
+                return this.knightMovementController.possibleSquaresForKnight(currentBoard.boardSquares, baseSquare);
             case "Bishop":
                 return this.bishopMovementController.possibleSquaresForBishop(currentBoard.boardSquares, baseSquare);
             case "Queen":
