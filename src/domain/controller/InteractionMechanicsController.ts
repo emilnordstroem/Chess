@@ -50,6 +50,8 @@ export class InteractionMechanicsController {
         }; // default
     }
 
+
+
     shiftTurn(currentTurn: PieceColor): PieceColor {
         return currentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White
     }

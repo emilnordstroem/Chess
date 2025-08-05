@@ -36,16 +36,6 @@ export class LogicalMechanicsController {
         return squareToOccupy.occupant?.color !== piece.color;
     }
 
-    relocatePieceToSquare(moveFromSquare: Square | null,
-                          pieceToMove: Piece | null,
-                          moveToSquare: Square | null): void {
-        if (moveFromSquare == null || moveToSquare == null) {
-            return;
-        }
-        moveFromSquare.occupant = null;
-        moveToSquare.occupant = pieceToMove;
-    }
-
     isSquareOccupied(squareToCheck: Square | null): boolean {
         return squareToCheck == null ? false : squareToCheck.isOccupied();
     }

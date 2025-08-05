@@ -16,7 +16,7 @@ export const ChessBoard = () => {
     const [currentChessBoard, setCurrentChessBoard] = useState<Board>(boardStructure.boardSetup());
     const [currentTurn, setCurrentTurn] = useState<PieceColor>(PieceColor.White);
     const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
-    const [validMoveSquares, setValidMoveSquares] = useState<Square[]>([]);
+    const [validSquaresToCapture, setValidSquaresToCapture] = useState<Square[]>([]);
 
     function squareBorderColor(clickedSquare: Square): string {
         if(logicalMechanics.isSquareSelected(selectedSquare, clickedSquare)){
@@ -29,7 +29,7 @@ export const ChessBoard = () => {
             }
         }
 
-        const isValidMoveSquare = validMoveSquares.some(
+        const isValidMoveSquare = validSquaresToCapture.some(
             square =>
                 square.file === clickedSquare.file
                 && square.rank === clickedSquare.rank
@@ -43,7 +43,12 @@ export const ChessBoard = () => {
     }
 
     function handleSquareClick(clickedSquare: Square): void {
-        const {newSelectedSquare, moveExecuted} = interactionMechanics.handleSquareClick(currentChessBoard, currentTurn, selectedSquare, clickedSquare);
+        const {newSelectedSquare, moveExecuted} = interactionMechanics.handleSquareClick(
+            currentChessBoard,
+            currentTurn,
+            selectedSquare,
+            clickedSquare
+        );
         setSelectedSquare(newSelectedSquare);
 
         if (newSelectedSquare && !moveExecuted) {
@@ -53,14 +58,12 @@ export const ChessBoard = () => {
                 newSelectedSquare.occupant!.type
             ) || [];
 
-            console.log("Selected piece type:", newSelectedSquare?.occupant?.type);
-
-            setValidMoveSquares(possibleMoves);
+            setValidSquaresToCapture(possibleMoves);
         } else {
-            setValidMoveSquares([]);
+            setValidSquaresToCapture([]);
         }
 
-        if (moveExecuted) {
+        if (moveExecuted){
             setCurrentTurn(interactionMechanics.shiftTurn(currentTurn));
         }
 
