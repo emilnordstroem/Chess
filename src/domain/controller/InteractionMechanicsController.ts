@@ -50,7 +50,31 @@ export class InteractionMechanicsController {
         }; // default
     }
 
+    handleSelectionOfSquare(currentTurn: PieceColor,
+                            selectedSquare: Square | null,
+                            clickedSquare: Square): Square | null {
+        if (selectedSquare == null) {
+            return this.logicalMechanics.isSquareOccupied(clickedSquare) ? clickedSquare : null
+            // new selected
+        } else if (this.logicalMechanics.isSquareTheSame(selectedSquare, clickedSquare)) {
+            return null
+            // unselected
+        } else if (!this.logicalMechanics.isSquareValidToSelect(currentTurn, selectedSquare)) {
+            return clickedSquare;
+            // invalid selection
+        }
+        return null;
+    }
 
+    processMoveToSquare(fromSquare: Square,
+                        toSquare: Sqaure): boolean {
+        const pieceToMove: Piece = fromSquare.occupant;
+        if (this.logicalMechanics.canPieceOccupySquare(pieceToMove, toSquare)) {
+            this.pieceMovement.relocatePieceToSquare(fromSquare, pieceToMove, toSquare);
+            return true;
+        }
+        return false;
+    }
 
     shiftTurn(currentTurn: PieceColor): PieceColor {
         return currentTurn == PieceColor.White ? PieceColor.Black : PieceColor.White

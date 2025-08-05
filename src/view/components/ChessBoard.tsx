@@ -43,15 +43,16 @@ export const ChessBoard = () => {
     }
 
     function handleSquareClick(clickedSquare: Square): void {
-        const {newSelectedSquare, moveExecuted} = interactionMechanics.handleSquareClick(
-            currentChessBoard,
+
+        const newSelectedSquare: Square | null = interactionMechanics.handleSelectionOfSquare(
             currentTurn,
             selectedSquare,
             clickedSquare
         );
+
         setSelectedSquare(newSelectedSquare);
 
-        if (newSelectedSquare && !moveExecuted) {
+        if (newSelectedSquare) {
             const possibleMoves = pieceMovement.possibleSquaresForPieceToCapture(
                 currentChessBoard,
                 newSelectedSquare,
@@ -63,12 +64,28 @@ export const ChessBoard = () => {
             setValidSquaresToCapture([]);
         }
 
-        if (moveExecuted){
-            setCurrentTurn(interactionMechanics.shiftTurn(currentTurn));
+        const isMoveAttempted = validSquaresToCapture.some(
+            square =>
+                square.rank === clickedSquare.rank
+                && square.file === clickedSquare.file
+        );
+
+        if (selectedSquare && isMoveAttempted) {
+            const validMoveWasMade: boolean = interactionMechanics.processMoveToSquare(
+                selectedSquare,
+                clickedSquare
+            );
+
+            if (validMoveWasMade) {
+                setSelectedSquare(null);
+                setValidSquaresToCapture([]);
+                setCurrentTurn(interactionMechanics.shiftTurn(currentTurn));
+                setCurrentChessBoard(boardStructure.getUpdatedBoard(currentChessBoard));
+            }
+
+            return;
         }
 
-        const updatedChessBoard: Board = boardStructure.getUpdatedBoard(currentChessBoard);
-        setCurrentChessBoard(updatedChessBoard);
     }
 
     return (
