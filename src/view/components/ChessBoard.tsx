@@ -53,6 +53,8 @@ export const ChessBoard = () => {
                 newSelectedSquare.occupant!.type
             ) || [];
 
+            console.log("Selected piece type:", newSelectedSquare?.occupant?.type);
+
             setValidMoveSquares(possibleMoves);
         } else {
             setValidMoveSquares([]);
