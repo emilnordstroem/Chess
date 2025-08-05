@@ -29,7 +29,7 @@ export class PieceMovementController {
         moveToSquare.occupant = pieceToMove;
     }
 
-    possibleSquaresForPieceToCapture(currentBoard: Board, baseSquare: Square, pieceType: PieceType): Square[] | undefined {
+    possibleSquaresForPieceToCapture(currentBoard: Board, baseSquare: Square, pieceType: PieceType): Square[] {
         switch (pieceType) {
             case "Pawn":
                 return this.pawnMovementController.possibleSquaresForPawn(currentBoard.boardSquares, baseSquare);
@@ -44,6 +44,7 @@ export class PieceMovementController {
             case "King":
                 return this.kingMovementController.possibleSquaresForKing(currentBoard.boardSquares, baseSquare);
         }
+        return [];
     }
 
 }

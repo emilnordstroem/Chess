@@ -61,7 +61,7 @@ export const ChessBoard = () => {
                 currentChessBoard,
                 newSelectedSquare,
                 newSelectedSquare.occupant!.type
-            ) || [];
+            );
 
             setValidSquaresToCapture(possibleMoves);
         } else {

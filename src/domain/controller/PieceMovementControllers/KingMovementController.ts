@@ -25,17 +25,36 @@ export class KingMovementController {
         const baseFileIndex: number = baseSquare.file - 1;
 
         for (const [directionRank, directionFile] of directions) {
-            const currentRankIndex: number = baseRankIndex + directionRank;
-            const currentFileIndex: number = baseFileIndex + directionFile;
+            possibleMoves.push(...this.possibleMoves(
+                currentBoardSqures,
+                piece,
+                baseRankIndex,
+                baseFileIndex,
+                directionRank,
+                directionFile
+            ));
+        }
 
-            if (this.inBounds(currentRankIndex, currentFileIndex)) {
-                const targetSquare: Square = currentBoardSqures[currentRankIndex][currentFileIndex];
-                if (!this.logicalMechanics.isSquareOccupied(targetSquare)
-                    || this.logicalMechanics.canPieceOccupySquare(piece, targetSquare)) {
-                    possibleMoves.push(targetSquare);
-                }
+        return possibleMoves;
+    }
+
+    private possibleMoves(currentBoardSqures: Square[][],
+                          piece: Piece,
+                          baseRankIndex: number,
+                          baseFileIndex: number,
+                          directionRank: number,
+                          directionFile: number): Square[] {
+        const possibleMoves: Square[] = [];
+
+        const currentRankIndex: number = baseRankIndex + directionRank;
+        const currentFileIndex: number = baseFileIndex + directionFile;
+
+        if (this.inBounds(currentRankIndex, currentFileIndex)) {
+            const targetSquare: Square = currentBoardSqures[currentRankIndex][currentFileIndex];
+            if (!this.logicalMechanics.isSquareOccupied(targetSquare)
+                || this.logicalMechanics.canPieceOccupySquare(piece, targetSquare)) {
+                possibleMoves.push(targetSquare);
             }
-
         }
 
         return possibleMoves;

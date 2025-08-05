@@ -47,13 +47,12 @@ export class PawnMovementController {
         return possibleMoves;
     }
 
-    private possibleFrontMoves(
-        currentBoardSqures: Square[][],
-        startRankIndex: number,
-        baseRankIndex: number,
-        baseFileIndex: number,
-        nextRankMovement: number,
-        doubleRankMovement: number): Square[]{
+    private possibleFrontMoves(currentBoardSqures: Square[][],
+                               startRankIndex: number,
+                               baseRankIndex: number,
+                               baseFileIndex: number,
+                               nextRankMovement: number,
+                               doubleRankMovement: number): Square[]{
         const possibleMoves: Square[] = [];
 
         if (this.inBounds(nextRankMovement, baseFileIndex)
@@ -71,11 +70,10 @@ export class PawnMovementController {
         return possibleMoves;
     }
 
-    private possibleDiagonalMoves(
-        currentBoardSqures: Square[][],
-        piece: Piece,
-        nextRankMovement: number,
-        diagonalFile: number): Square[]{
+    private possibleDiagonalMoves(currentBoardSqures: Square[][],
+                                  piece: Piece,
+                                  nextRankMovement: number,
+                                  diagonalFile: number): Square[]{
         const possibleMoves: Square[] = [];
 
         if (this.inBounds(nextRankMovement, diagonalFile)) {
